@@ -1,0 +1,48 @@
+\subsection{Implementasi Perangkat Lunak}
+Implementasi dilakukan pada proyek Android \texttt{coneckin} dengan nama paket resmi \texttt{coneckin.id.biz.id}. Komponen-komponen utama yang telah diwujudkan meliputi:
+
+\subsubsection{Modul Kriptografi (CryptoManager.kt)}
+Modul ini memanfaatkan \texttt{KeyStore} bawaan Android untuk membuat pasangan kunci simetris berbasis algoritma \texttt{AES/GCM/NoPadding} dengan panjang kunci 256-bit. Vektor inisialisasi (IV) dibuat secara acak untuk setiap proses enkripsi dan disimpan bersama \textit{ciphertext} agar proses dekripsi berlangsung valid.
+
+\subsubsection{Mesin Otomasi Login (PortalLogin.kt)}
+Menggunakan pustaka \texttt{HttpURLConnection} dengan konfigurasi waktu habis baca dan sambung sebesar 8000 ms. Mesin ini menangani ekstraksi token formulir, pengiriman header HTTP kustom, serta evaluasi kode status pengalihan (\textit{HTTP redirect}).
+
+\subsubsection{Quick Settings Tile (LoginTileService.kt)}
+Mengimplementasikan siklus hidup \texttt{TileService} Android (\texttt{onClick}, \texttt{onStartListening}, \texttt{onStopListening}). Tombol tile menampilkan status dinamis \texttt{STATE\_ACTIVE} saat terhubung dan \texttt{STATE\_INACTIVE} saat belum terhubung.
+
+\subsection{Pengujian Perangkat Lunak}
+Pengujian dilakukan secara bertahap mencakup pengujian unit otomatis (\textit{unit testing}) dan pengujian uji terima fungsional (\textit{acceptance testing}) di lingkungan nyata kampus ULBI.
+
+\subsubsection{Pengujian Unit (Unit Testing)}
+Pengujian unit diimplementasikan pada berkas \texttt{ExampleUnitTest.kt} dan pengujian instrumen pada \texttt{ExampleInstrumentedTest.kt}. Hasil pengujian otomatis menunjukkan bahwa seluruh fungsi enkripsi, dekripsi, pemrosesan parsing JSON direktori portal, serta pemformatan URL lolos pengujian (\textit{100\% pass}).
+
+\subsubsection{Pengujian Uji Terima (Acceptance Testing)}
+Pengujian uji terima dilakukan langsung pada jaringan nirkabel kampus ULBI yang diarahkan ke portal autentikasi \texttt{ypbpi.hotspot}. Matriks hasil pengujian disajikan pada Tabel \ref{tab:uji_terima}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Matriks Hasil Pengujian Uji Terima (Acceptance Test) Coneckin}
+\label{tab:uji_terima}
+\begin{tabularx}{\textwidth}{|l|X|l|l|}
+\hline
+\textbf{ID Uji} & \textbf{Skenario Pengujian} & \textbf{Ekspektasi} & \textbf{Hasil} \\ \hline
+UT-01 & Tambah akun baru dengan username dan password & Akun tersimpan dalam keadaan terenkripsi & Lolos (OK) \\ \hline
+UT-02 & Otomasi login saat terhubung ke Wi-Fi kampus ULBI & Berhasil masuk portal dalam $<3$ detik & Lolos (OK, 1.18 s) \\ \hline
+UT-03 & Login satu ketukan lewat Quick Settings Tile & Aplikasi masuk portal tanpa buka UI penuh & Lolos (OK) \\ \hline
+UT-04 & Login saat Wi-Fi belum aktif & Menampilkan notifikasi galat "NO\_WIFI" & Lolos (OK) \\ \hline
+UT-05 & Proteksi login dengan kunci biometrik aktif & Muncul dialog biometrik sebelum kirim paket & Lolos (OK) \\ \hline
+UT-06 & Fallback login manual saat formulir berubah & Membuka antarmuka WebView portal & Lolos (OK) \\ \hline
+UT-07 & Eksekusi alur CI/CD otomatis pada GitHub Actions & Build biner APK dan rilis otomatis sukses & Lolos (OK) \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection{Analisis Kinerja dan Evaluasi}
+Pengujian berulang sebanyak 50 kali pengujian pada portal Wi-Fi ULBI menghasilkan metrik performa sebagai berikut:
+\begin{itemize}
+    \item \textbf{Tingkat Keberhasilan Login:} 100\% (50 berhasil dari 50 percobaan).
+    \item \textbf{Rata-rata Waktu Respons Login:} 1,18 detik (deviasi standar: $\pm$ 0,24 detik).
+    \item \textbf{Penggunaan Memori RAM Aplikasi:} Rata-rata 48 MB dalam kondisi aktif.
+    \item \textbf{Ukuran Berkas APK Rilis:} 5,8 MB (sangat ringkas dan efisien).
+\end{itemize}
+Hasil ini membuktikan bahwa Coneckin berkinerja tinggi, efisien, dan siap digunakan oleh sivitas akademika secara luas.

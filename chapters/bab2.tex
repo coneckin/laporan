@@ -1,0 +1,18 @@
+\subsection{Captive Portal dan Mekanisme Autentikasi Jaringan}
+\textit{Captive portal} merupakan teknologi manajemen jaringan di mana perangkat klien yang terhubung ke jaringan Wi-Fi dicegat oleh router/gateway sebelum memperoleh izin rute penuh ke jaringan publik \cite{captive_portal_survey}. Sistem gateway membelokkan paket HTTP/HTTPS pengguna ke alamat IP atau nama domain internal (misalnya \texttt{ypbpi.hotspot} pada kampus ULBI) yang menampilkan formulir kredensial akun. Setelah formulir dikirimkan melalui metode HTTP POST dengan parameter nama pengguna dan kata sandi yang valid, gateway mencatat alamat MAC perangkat klien pada tabel \textit{authorized clients} dan mengizinkan aliran paket data berikutnya.
+
+\subsection{Pengembangan Android Native dengan Kotlin dan Jetpack Compose}
+Android \textit{native} menawarkan performa optimal dan akses langsung ke seluruh API subsistem perangkat keras. Bahasa pemrograman Kotlin dipilih karena sifatnya yang ekspresif, aman terhadap \textit{null pointer exception}, dan didukung secara resmi oleh Google. 
+
+Antarmuka pengguna Coneckin dibangun secara deklaratif menggunakan Jetpack Compose \cite{jetpack_compose_study}. Pendekatan deklaratif memisahkan logika status (\textit{state management}) dengan representasi visual secara reaktif, sehingga kode antarmuka menjadi lebih modular, ringkas, dan mudah diuji dibandingkan paradigma berbasis XML lama.
+
+\subsection{Arsitektur Keamanan Android: Keystore dan Biometrik}
+Penyimpanan kredensial secara aman pada sistem operasi Android diatur melalui \textit{Android Keystore System} \cite{android_security_internals, google_android_docs}. Keystore menyediakan kontainer berbasis perangkat keras (\textit{Hardware-backed Keymaster / StrongBox Keymaster}) yang memastikan kunci enkripsi tidak pernah diekstraksi ke memori sistem operasi yang rentan terhadap \textit{memory dumping}.
+
+Coneckin menerapkan algoritma Advanced Encryption Standard (AES) dengan mode Galois/Counter Mode (AES-GCM-256) untuk mengenkripsi kata sandi pengguna sebelum disimpan ke dalam \textit{EncryptedSharedPreferences}. Selain itu, aplikasi memanfaatkan API \textit{BiometricPrompt} untuk mengunci akses eksekusi tombol login satu ketukan menggunakan pemindaian sidik jari (\textit{fingerprint}) atau PIN perangkat pengguna.
+
+\subsection{Integrasi Subsistem Android: Quick Settings Tile Service}
+Mulai Android 7.0 (API 24), sistem operasi menyediakan API \texttt{TileService} yang memungkinkan aplikasi menyematkan tombol aksi cepat (\textit{Quick Settings Tile}) pada tirai panel notifikasi atas perangkat. Dengan mendaftarkan layanan yang mewarisi \texttt{TileService}, pengguna dapat menginisiasi siklus koneksi dan login Wi-Fi secara instan dari layar mana pun tanpa perlu membuka aplikasi utama terlebih dahulu.
+
+\subsection{Otomasi Alur Kerja CI/CD dengan GitHub Actions}
+Pengujian dan penyebaran perangkat lunak modern menuntut integrasi berkelanjutan (\textit{Continuous Integration}) dan pengiriman berkelanjutan (\textit{Continuous Delivery}) \cite{vokasi_capstone_eng}. GitHub Actions menyediakan mesin eksekusi alur kerja berbasis berkas YAML yang dapat dikonfigurasi untuk memvalidasi kode, menjalankan pengujian unit otomatis, menandatangani biner dengan kunci rilis (\textit{keystore signing}), dan mempublikasikan paket rilis secara otomatis saat terjadi \textit{push} pada cabang utama (\textit{main branch}).

@@ -1,0 +1,54 @@
+\subsection{Latar Belakang}
+Kebutuhan akses internet berkecepatan tinggi menjadi pilar fundamental dalam mendukung aktivitas tridharma perguruan tinggi di Universitas Logistik dan Bisnis Internasional (ULBI). Pengelolaan akses Wi-Fi kampus umumnya memanfaatkan mekanisme \textit{captive portal}, di mana lalu lintas data pengguna diarahkan secara paksa ke halaman web autentikasi sebelum izin penjelajahan internet diberikan.
+
+Meskipun efektif untuk manajemen hak akses dan kuota, penerapan \textit{captive portal} menimbulkan friksi teknis yang signifikan bagi mahasiswa dan dosen:
+\begin{enumerate}
+    \item \textbf{Pengisian Berulang:} Mahasiswa berpindah ruangan perkuliahan atau laboratorium sering kali mengalami pemutusan sesi (\textit{session timeout}), sehingga wajib membuka peramban web dan memasukkan kembali nama pengguna serta kata sandi secara manual.
+    \item \textbf{Kegagalan Redirection:} Pada sejumlah sistem operasi Android modern, fitur \textit{captive portal detection} terkadang tidak membuka antarmuka peramban secara otomatis atau memunculkan peringatan ketiadaan koneksi internet tanpa opsi langsung masuk portal.
+    \item \textbf{Keamanan Kredensial:} Pengetikan kredensial di tempat umum rentan terhadap intipan visual (\textit{shoulder surfing}) maupun kekeliruan penyimpanan kata sandi pada peramban publik.
+\end{enumerate}
+
+Untuk mengatasi tantangan tersebut, Proyek 2 ini mengembangkan aplikasi perangkat bergerak \textbf{Coneckin} berbasis Android \textit{native} dengan nama paket \texttt{coneckin.id.biz.id}. Coneckin dibangun untuk memberikan kemudahan koneksi satu ketukan (\textit{one-tap connection}) dengan tingkat keamanan tinggi melalui enkripsi lokal berbasis perangkat keras (\textit{hardware-backed cryptography}).
+
+\subsection{Profil Kompetensi Capstone: Software Engineer}
+Sesuai dengan ketentuan kurikulum Proyek Capstone Sarjana Terapan Teknik Informatika ULBI dan panduan proyek pada \url{https://ll.my.id/instruction/}, Proyek 2 berfokus pada pembuktian profil kompetensi \textbf{Software Engineer}. Pada tahap ini, mahasiswa diwajibkan untuk:
+\begin{enumerate}
+    \item Membangun fitur perangkat lunak secara utuh dan \textit{end-to-end} (analisis kebutuhan $\rightarrow$ perancangan arsitektur $\rightarrow$ implementasi $\rightarrow$ integrasi).
+    \item Menulis kode pengujian mandiri (\textit{unit testing} dan \textit{integration testing}) untuk memverifikasi kebenaran logika bisnis.
+    \item Mengintegrasikan \textit{Continuous Integration / Continuous Deployment} (CI/CD) pada GitHub Actions untuk menjalankan build dan pengujian secara otomatis setiap kali ada pembaruan kode.
+    \item Menghasilkan artefak rilis berupa berkas biner (APK/AAB) serta dokumentasi terdistribusi.
+\end{enumerate}
+
+\subsection{Rumusan Masalah}
+Berdasarkan latar belakang yang diuraikan, rumusan masalah dalam Proyek 2 ini adalah:
+\begin{enumerate}
+    \item Bagaimana merancang arsitektur aplikasi Android yang mampu mendeteksi dan mengotomasi proses login \textit{captive portal} Wi-Fi kampus ULBI secara andal dan cepat?
+    \item Bagaimana mengamankan penyimpanan kredensial akun multipengguna pada penyimpanan lokal perangkat Android tanpa mengirimkan kata sandi ke server pihak ketiga?
+    \item Bagaimana mengimplementasikan integrasi antarmuka \textit{Quick Settings Tile} pada panel notifikasi Android untuk memfasilitasi akses login satu ketukan?
+    \item Bagaimana menyusun rangkaian pengujian otomatis dan pipeline CI/CD untuk memastikan kualitas serta kestabilan rilis aplikasi?
+\end{enumerate}
+
+\subsection{Batasan Masalah}
+Batasan masalah dalam pelaksanaan proyek ini meliputi:
+\begin{enumerate}
+    \item Aplikasi dikembangkan untuk sistem operasi Android dengan target SDK versi 34 (Android 14) dan batas minimum SDK versi 29 (Android 10).
+    \item Pengujian otomasi login difokuskan pada infrastruktur \textit{captive portal} Wi-Fi kampus ULBI dengan \textit{hostname} \texttt{ypbpi.hotspot}.
+    \item Kredensial pengguna disimpan secara lokal terenkripsi di dalam perangkat dan tidak pernah disinkronkan ke server eksternal demi privasi pengguna.
+\end{enumerate}
+
+\subsection{Tujuan Proyek}
+Tujuan yang dicapai melalui proyek ini adalah:
+\begin{enumerate}
+    \item Menghasilkan aplikasi Android Coneckin yang berfungsi secara penuh untuk melakukan otomasi login \textit{captive portal} kampus.
+    \item Menerapkan arsitektur keamanan dengan modul \textit{CryptoManager} yang memanfaatkan Android Keystore dan autentikasi biometrik.
+    \item Mengimplementasikan komponen \textit{Quick Settings Tile} pada antarmuka Android.
+    \item Membangun alur CI/CD pada GitHub Actions yang mencakup build otomatis, pengujian unit, serta rilis otomatis APK dan dokumen PDF.
+\end{enumerate}
+
+\subsection{Manfaat Proyek}
+Manfaat dari penelitian dan pengembangan ini adalah:
+\begin{enumerate}
+    \item \textbf{Bagi Mahasiswa/Pengguna:} Menghemat waktu akses jaringan Wi-Fi di lingkungan kampus dan meningkatkan kenyamanan aktivitas akademik.
+    \item \textbf{Bagi Institusi (ULBI):} Menyediakan portofolio produk perangkat lunak terapan yang siap pakai karya mahasiswa program studi Sarjana Terapan Teknik Informatika.
+    \item \textbf{Bagi Pengembang:} Memenuhi capaian pembelajaran mata kuliah Proyek 2 serta mengasah kompetensi rekayasa perangkat lunak modern.
+\end{enumerate}

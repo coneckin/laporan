@@ -1,0 +1,197 @@
+% =========================================================================
+% Laporan Proyek 2 - Program Studi Sarjana Terapan Teknik Informatika
+% Universitas Logistik dan Bisnis Internasional (ULBI)
+% Format Standar Sesuai Ketentuan Instruksi https://ll.my.id/instruction/
+% =========================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% Paket Standar
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx} % Times New Roman
+\usepackage{courier}
+\usepackage{amsmath,amssymb}
+\usepackage[indonesian]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage[format=hang,font=footnotesize,labelfont=bf]{caption}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+
+% Pengaturan Margin (Standar ULBI: Top 3cm, Bottom 3cm, Left 4cm, Right 3cm)
+\geometry{
+    top=3cm,
+    bottom=3cm,
+    left=4cm,
+    right=3cm
+}
+
+% Format Judul Bab dan Subbab
+\titleformat{\section}
+    {\normalfont\fontsize{14}{17}\bfseries\centering}{\thesection}{1em}{}
+    
+\titleformat{\subsection}
+    {\normalfont\fontsize{12}{15}\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+    {\normalfont\fontsize{12}{15}\bfseries}{\thesubsubsection}{1em}{}
+
+% Spasi 1.5
+\onehalfspacing
+
+% Header / Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% Pengaturan Hyperlink
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue
+}
+
+% Kustomisasi Daftar Isi
+\renewcommand{\contentsname}{DAFTAR ISI}
+\renewcommand{\listtablename}{DAFTAR TABEL}
+\renewcommand{\listfigurename}{DAFTAR GAMBAR}
+
+\begin{document}
+
+% -------------------------------------------------------------------------
+% Halaman Sampul (Cover)
+% -------------------------------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+    
+    {\fontsize{16}{20}\selectfont \textbf{LAPORAN PROYEK 2}\par}
+    \vspace{0.8cm}
+    
+    {\fontsize{14}{18}\selectfont \textbf{RANCANG BANGUN APLIKASI CONECKIN: OTOMASI AUTENTIKASI CAPTIVE PORTAL BERBASIS ANDROID DENGAN ARSITEKTUR KREDENSIAL TERENKRIPSI}\par}
+    
+    \vspace{2.5cm}
+    
+    {\fontsize{12}{15}\selectfont
+    Disusun untuk memenuhi syarat kelulusan mata kuliah Proyek 2\\
+    pada Program Studi Sarjana Terapan Teknik Informatika\par}
+    
+    \vspace{2.5cm}
+    
+    {\fontsize{12}{15}\selectfont
+    \textbf{Disusun Oleh:}\par
+    \vspace{0.3cm}
+    \textbf{TIM PENGEMBANG CONECKIN}\par
+    \textbf{NIM / KELAS: D4 TEKNIK INFORMATIKA}\par}
+    
+    \vfill
+    
+    {\fontsize{14}{17}\selectfont
+    \textbf{PROGRAM STUDI SARJANA TERAPAN TEKNIK INFORMATIKA}\par
+    \textbf{SEKOLAH TINGGI TEKNOLOGI INFORMASI}\par
+    \textbf{UNIVERSITAS LOGISTIK DAN BISNIS INTERNASIONAL}\par
+    \textbf{BANDUNG}\par
+    \textbf{2026}\par}
+\end{titlepage}
+
+% Halaman Awal dengan Angka Romawi
+\pagenumbering{roman}
+\setcounter{page}{2}
+
+% -------------------------------------------------------------------------
+% Ringkasan Eksekutif
+% -------------------------------------------------------------------------
+\clearpage
+\section*{RINGKASAN}
+\phantomsection
+\addcontentsline{toc}{section}{RINGKASAN}
+\input{chapters/ringkasan}
+
+% -------------------------------------------------------------------------
+% Daftar Isi dan Tabel
+% -------------------------------------------------------------------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{DAFTAR ISI}
+\tableofcontents
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{DAFTAR TABEL}
+\listoftables
+
+% -------------------------------------------------------------------------
+% Bab 1: Pendahuluan
+% -------------------------------------------------------------------------
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section*{BAB 1 \\ PENDAHULUAN}
+\phantomsection
+\addcontentsline{toc}{section}{BAB 1 PENDAHULUAN}
+\input{chapters/bab1}
+
+% -------------------------------------------------------------------------
+% Bab 2: Tinjauan Pustaka
+% -------------------------------------------------------------------------
+\clearpage
+\section*{BAB 2 \\ TINJAUAN PUSTAKA}
+\phantomsection
+\addcontentsline{toc}{section}{BAB 2 TINJAUAN PUSTAKA}
+\input{chapters/bab2}
+
+% -------------------------------------------------------------------------
+% Bab 3: Analisis dan Perancangan
+% -------------------------------------------------------------------------
+\clearpage
+\section*{BAB 3 \\ ANALISIS DAN PERANCANGAN SISTEM}
+\phantomsection
+\addcontentsline{toc}{section}{BAB 3 ANALISIS DAN PERANCANGAN SISTEM}
+\input{chapters/bab3}
+
+% -------------------------------------------------------------------------
+% Bab 4: Implementasi dan Pengujian
+% -------------------------------------------------------------------------
+\clearpage
+\section*{BAB 4 \\ IMPLEMENTASI DAN PENGUJIAN}
+\phantomsection
+\addcontentsline{toc}{section}{BAB 4 IMPLEMENTASI DAN PENGUJIAN}
+\input{chapters/bab4}
+
+% -------------------------------------------------------------------------
+% Bab 5: Penutup
+% -------------------------------------------------------------------------
+\clearpage
+\section*{BAB 5 \\ PENUTUP}
+\phantomsection
+\addcontentsline{toc}{section}{BAB 5 PENUTUP}
+\input{chapters/bab5}
+
+% -------------------------------------------------------------------------
+% Daftar Pustaka
+% -------------------------------------------------------------------------
+\clearpage
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\phantomsection
+\addcontentsline{toc}{section}{DAFTAR PUSTAKA}
+
+% -------------------------------------------------------------------------
+% Lampiran
+% -------------------------------------------------------------------------
+\clearpage
+\input{chapters/lampiran}
+
+\end{document}

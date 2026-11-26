@@ -1,0 +1,48 @@
+\subsection{Analisis Kebutuhan Sistem}
+Analisis kebutuhan sistem dirancang untuk memastikan bahwa perangkat lunak memenuhi ekspektasi pengguna dan kriteria fungsional Proyek 2:
+
+\subsubsection{Kebutuhan Fungsional}
+\begin{enumerate}
+    \item \textbf{SKF-01 (Manajemen Akun):} Sistem wajib menyediakan fitur penambahan, pengubahan, pemilihan akun aktif, serta penghapusan akun portal Wi-Fi.
+    \item \textbf{SKF-02 (Enkripsi Kredensial):} Sistem wajib mengenkripsi kata sandi menggunakan AES-256 melalui Android Keystore sebelum disimpan pada media penyimpanan lokal.
+    \item \textbf{SKF-03 (Autentikasi Captive Portal):} Sistem wajib mendeteksi keterhubungan ke jaringan Wi-Fi, membaca parameter formulir portal, dan mengirimkan permintaan HTTP POST untuk autentikasi secara otomatis.
+    \item \textbf{SKF-04 (Fallback Login Manual):} Sistem wajib menyediakan antarmuka WebView terintegrasi apabila proses otomasi HTTP mengalami kendala (misal: verifikasi Captcha tambahan).
+    \item \textbf{SKF-05 (Quick Settings Tile):} Sistem wajib menyediakan tombol pintasan \textit{Tile} di panel kontrol sistem Android untuk login instan.
+    \item \textbf{SKF-06 (Autentikasi Biometrik):} Sistem menyediakan opsi penguncian tombol login dengan otorisasi sidik jari atau PIN perangkat.
+\end{enumerate}
+
+\subsubsection{Kebutuhan Non-Fungsional}
+\begin{enumerate}
+    \item \textbf{SKNF-01 (Kinerja):} Proses eksekusi login portal di latar belakang tidak boleh melebihi batas waktu (\textit{timeout}) 5 detik dalam kondisi jaringan stabil.
+    \item \textbf{SKNF-02 (Privasi Data):} Kredensial akun tidak boleh dikirimkan ke server pengembang atau pihak ketiga mana pun selain host \textit{captive portal} resmi.
+    \item \textbf{SKNF-03 (Kompatibilitas):} Aplikasi wajib dapat dieksekusi dengan baik mulai dari Android versi 10 (API 29) hingga versi 14 (API 34).
+\end{enumerate}
+
+\subsection{Arsitektur Sistem}
+Aplikasi Coneckin mengadopsi pola arsitektur MVVM (\textit{Model-View-ViewModel}) yang memisahkan tanggung jawab kode menjadi tiga lapisan utama:
+\begin{enumerate}
+    \item \textbf{View Layer (Jetpack Compose):} Bertanggung jawab menampilkan antarmuka pengguna (\texttt{MainActivity}, \texttt{ManualLoginScreen}, dan komponen dialog). Lapisan ini bersifat reaktif dan mengamati perubahan status data (\textit{state}) tanpa memuat logika bisnis.
+    \item \textbf{ViewModel \& Coordinator Layer:} Mengelola siklus hidup status aplikasi, menangani input pengguna, serta mengoordinasikan interaksi antara lapisan antarmuka dan domain bisnis.
+    \item \textbf{Data \& Service Layer:} Terdiri dari modul \texttt{AccountStore} (manajemen kredensial terenkripsi), \texttt{CryptoManager} (kriptografi Keystore), \texttt{PortalLogin} (mesin otomasi HTTP handshake), \texttt{LoginTileService} (integrasi panel sistem Android), dan \texttt{Remote} (sinkronisasi direktori portal).
+\end{enumerate}
+
+\subsection{Perancangan Alur Otomasi Login}
+Alur kerja otomasi autentikasi \textit{captive portal} dirancang dengan algoritma berikut:
+\begin{enumerate}
+    \item Pengguna menekan tombol \textbf{LOGIN WIFI} pada antarmuka aplikasi atau mengetuk \textit{Quick Settings Tile}.
+    \item Aplikasi memeriksa ketersediaan koneksi Wi-Fi menggunakan \texttt{ConnectivityManager}. Jika Wi-Fi belum aktif, proses dibatalkan dengan pesan galat \texttt{NO\_WIFI}.
+    \item Aplikasi mengambil kredensial akun aktif yang didekripsi melalui modul \texttt{CryptoManager}.
+    \item Aplikasi mengirimkan permintaan deteksi ke URL referensi konektivitas (\textit{probe}). Apabila respons dialihkan (HTTP 302/307) menuju alamat portal (misal \texttt{ypbpi.hotspot}), aplikasi mengekstrak parameter formulir login.
+    \item Aplikasi mengirimkan paket HTTP POST berisi nama pengguna dan kata sandi menuju titik akhir autentikasi portal.
+    \item Jika respons menghasilkan kode status sukses atau redirection menuju internet publik, aplikasi menandai status \textbf{Berhasil Terhubung} dan memperbarui status \textit{Tile} menjadi aktif.
+    \item Jika terjadi kegagalan respons dalam durasi 4 detik, aplikasi menawarkan opsi \textbf{Buka Halaman Portal} melalui WebView.
+\end{enumerate}
+
+\subsection{Perancangan Antarmuka Pengguna (UI/UX)}
+Antarmuka Coneckin dirancang mengikuti pedoman \textit{Material Design 3} dengan dukungan tema dinamis (Mode Terang dan Mode Gelap). Layar utama menampilkan:
+\begin{itemize}
+    \item Kartu status koneksi Wi-Fi saat ini (SSID yang terhubung dan status autentikasi).
+    \item Tombol utama berukuran besar (\textit{Call-to-Action}) bertuliskan \textbf{LOGIN WIFI}.
+    \item Daftar akun yang tersimpan beserta tombol radio untuk memilih akun aktif.
+    \item Tombol aksi cepat tambah akun, pengaturan keamanan biometrik, dan riwayat status koneksi.
+\end{itemize}

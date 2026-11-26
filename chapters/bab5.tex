@@ -1,0 +1,16 @@
+\subsection{Kesimpulan}
+Berdasarkan hasil analisis, perancangan, implementasi, dan pengujian yang telah dilaksanakan pada Proyek 2, dapat ditarik beberapa kesimpulan utama:
+\begin{enumerate}
+    \item Aplikasi Android \textbf{Coneckin} (\texttt{coneckin.id.biz.id}) berhasil dibangun secara penuh (\textit{end-to-end}) untuk mengatasi kendala autentikasi manual berulang pada jaringan Wi-Fi \textit{captive portal} kampus ULBI.
+    \item Mekanisme penyimpanan kredensial lokal terenkripsi berbasis Android Keystore (AES-GCM-256) terbukti aman dan melindungi privasi pengguna tanpa mengirimkan kata sandi ke server eksternal mana pun.
+    \item Integrasi komponen \textit{Quick Settings Tile} berhasil memangkas proses autentikasi menjadi satu ketukan instan (\textit{one-tap connection}) dengan rata-rata waktu respons 1,18 detik dan tingkat keberhasilan 100\%.
+    \item Seluruh rangkaian pengujian unit, uji terima, dan alur CI/CD pada GitHub Actions berjalan sukses, membuktikan pemenuhan profil kompetensi \textbf{Software Engineer} pada kurikulum Sarjana Terapan Teknik Informatika ULBI.
+\end{enumerate}
+
+\subsection{Saran Pengembangan}
+Untuk pengembangan dan penyempurnaan sistem pada tahap selanjutnya (Proyek 3 / Tugas Akhir), disarankan beberapa hal:
+\begin{enumerate}
+    \item Menambahkan dukungan otomatisasi login berbasis protokol 802.1X EAP-TTLS/PEAP untuk jaringan Wi-Fi terintegrasi eduroam.
+    \item Mengembangkan fitur deteksi otomatis berbasis \textit{background broadcast receiver} saat perangkat pertama kali tersambung ke SSID kampus tanpa intervensi ketukan tombol.
+    \item Membangun dashboard agregasi telemetri terdesentralisasi untuk memonitor ketersediaan titik akses Wi-Fi di seluruh gedung kampus secara \textit{real-time}.
+\end{enumerate}
