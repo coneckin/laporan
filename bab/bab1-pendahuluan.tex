@@ -1,0 +1,56 @@
+\chapter{Pendahuluan}
+
+\section{Latar Belakang}
+Layanan jaringan nirkabel (WiFi) di lingkungan perguruan tinggi umumnya dilindungi mekanisme \textit{captive portal} berbasis web agar hanya sivitas akademika yang memiliki akun resmi yang dapat mengakses internet \cite{rfc8952}. Kendati efektif dari sisi pengendalian akses, proses autentikasi manual melalui peramban menimbulkan friksi ketika pengguna berpindah gedung, sesi kedaluwarsa, atau perangkat terputus sementara dari titik akses (\textit{access point}). Pengguna harus membuka ulang halaman portal dan mengetikkan nama pengguna serta kata sandi secara berulang.
+
+Aplikasi \textbf{Coneckin} hadir sebagai solusi Android native berbasis Kotlin dan Jetpack Compose yang memungkinkan proses masuk ke portal WiFi kampus cukup dengan satu ketukan, baik dari layar utama aplikasi maupun lewat \textit{Quick Settings Tile}. Untuk menjaga privasi, kredensial pengguna disimpan terenkripsi lokal di perangkat memakai AES-256 GCM melalui \texttt{AndroidKeyStore} tanpa pernah dikirim ke server pusat \cite{android_keystore,nist_gcm}. Sementara itu, layanan server REST API pada Node.js dan MongoDB menyediakan direktori portal kampus terverifikasi, informasi konfigurasi rilis aplikasi, dan penampung laporan gangguan anonim bersifat opsional (\textit{opt-in}).
+
+Pada versi awal aplikasi, masih terdapat beberapa kesenjangan rekayasa perangkat lunak yang perlu diselesaikan dalam Proyek 2:
+\begin{enumerate}[leftmargin=*]
+  \item Operasi \textit{Update} pada penyimpanan akun lokal Android belum tersedia sehingga pengguna harus menghapus dan membuat ulang akun ketika kata sandi atau alamat portal berubah.
+  \item Layanan server API sebelumnya baru menyediakan operasi baca publik (\texttt{GET /portals}, \texttt{GET /config}) dan tambah laporan (\texttt{POST /reports}), belum memiliki endpoint CRUD administratif lengkap maupun header CORS bagi konsumsi web.
+  \item Pengujian otomatis belum mencakup pengukuran \textit{code coverage}, belum menyertakan pengujian instrumentasi untuk \texttt{AndroidKeyStore}, dan alur CI GitHub Actions belum menegakkan ambang kelulusan uji sebelum membangun rilis APK/AAB.
+  \item Belum tersedianya halaman panduan dan direktori portal berbasis konvensi modular Croot.js pada repositori terpisah \texttt{coneckin.github.io} yang tersinkronisasi langsung dengan API produksi dan rilis APK terbaru.
+\end{enumerate}
+
+\section{Rumusan Masalah}
+Berdasarkan latar belakang tersebut, rumusan masalah pada Proyek 2 ini adalah sebagai berikut:
+\begin{enumerate}[leftmargin=*]
+  \item Bagaimana merancang dan melengkapi arsitektur \textit{Hybrid CRUD} secara penuh pada sisi penyimpanan terenkripsi lokal Android serta pada layanan REST API server MongoDB?
+  \item Bagaimana menerapkan mekanisme penjaminan mutu berbasis pengujian otomatis (\textit{unit test}, \textit{instrumented test}, dan pengujian integrasi API) dengan ambang \textit{line coverage} minimal 80\% yang terintegrasi dalam pipeline CI/CD?
+  \item Bagaimana membangun \textit{landing page} panduan instalasi dan direktori portal berbasis konvensi Croot.js pada \texttt{coneckin.github.io} yang terhubung langsung ke API produksi dan rilis APK terbaru?
+  \item Bagaimana mengotomatisasi penyusunan dan rilis dokumentasi akademik LaTeX pada repositori organisasi GitHub Coneckin?
+\end{enumerate}
+
+\section{Tujuan Proyek}
+Tujuan yang dicapai dalam pelaksanaan Proyek 2 ini meliputi:
+\begin{enumerate}[leftmargin=*]
+  \item Melengkapi fitur \textit{Ubah Akun} pada aplikasi Android Coneckin serta memisahkan logika bisnis murni agar dapat diuji pada JVM tanpa ketergantungan antarmuka.
+  \item Mengimplementasikan endpoint CRUD lengkap pada server Express 5 dan MongoDB (\texttt{coneckin\_db}) yang diamankan otorisasi token admin (SHA-256 \texttt{timingSafeEqual}) serta CORS baca publik.
+  \item Mencapai \textit{code coverage} $\ge 80\%$ pada lapisan logika Android (JaCoCo) dan server Node.js, dilengkapi \textit{instrumented test} \texttt{AndroidKeyStore} dan integrasi \textit{test-before-release} di GitHub Actions.
+  \item Menayangkan \textit{landing page} responsif berbasis konvensi Croot.js di \url{https://coneckin.github.io/} yang terhubung langsung dengan API produksi di \url{https://panlink.alwaysdata.net}.
+  \item Menyediakan alur kompilasi dan rilis otomatis dokumen PDF berbasis LaTeX pada repositori \texttt{laporan} dan \texttt{jurnal}.
+\end{enumerate}
+
+\section{Ruang Lingkup dan Struktur Ekosistem}
+Ekosistem Coneckin dikelola pada organisasi GitHub \url{https://github.com/coneckin} yang terbagi ke dalam lima repositori resmi sebagaimana dirangkum pada Tabel~\ref{tab:ekosistem}.
+
+\begin{table}[H]
+\centering
+\caption{Pemetaan Lima Repositori Ekosistem Proyek 2 Coneckin}
+\label{tab:ekosistem}
+\begin{tabular}{@{}p{3.1cm}p{4.1cm}p{5.6cm}@{}}
+\toprule
+\textbf{Repositori} & \textbf{Teknologi Utama} & \textbf{Peran dalam Ekosistem} \\
+\midrule
+\texttt{coneckin} & Kotlin, Jetpack Compose, JUnit 4, JaCoCo; Node.js, Express 5, MongoDB & Aplikasi Android native, API server REST, pengujian otomatis, dan CI/CD rilis APK/AAB. \\
+\texttt{coneckin.github.io} & HTML5, CSS3, ES6 Module (konvensi Croot.js) & \textit{Landing page} panduan instalasi, direktori portal dinamis, status API, dan tautan rilis APK terbaru. \\
+\texttt{laporan} & LaTeX, GitHub Actions & Laporan akhir Proyek 2 dengan kompilasi dan rilis PDF otomatis. \\
+\texttt{jurnal} & LaTeX, GitHub Actions & Artikel ilmiah Proyek 2 dalam format jurnal dengan rilis PDF otomatis. \\
+\texttt{presentasi} & Crootss.if.co.id & Dek slide presentasi untuk demo dan sidang Proyek 2. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Sistematika Penulisan}
+Laporan ini disusun dalam lima bab: Bab~1 membahas latar belakang, rumusan masalah, tujuan, dan ruang lingkup; Bab~2 menguraikan landasan teori dan teknologi yang digunakan; Bab~3 menjelaskan analisis arsitektur \textit{Hybrid CRUD}, keamanan, dan perancangan sistem; Bab~4 memaparkan hasil implementasi, pengujian otomatis, dan verifikasi produksi; serta Bab~5 berisi kesimpulan dan saran pengembangan lanjutan.

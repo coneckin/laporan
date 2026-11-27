@@ -1,0 +1,72 @@
+% ---------- HALAMAN SAMPUL ----------
+\begin{titlepage}
+\begin{center}
+\textbf{\large LAPORAN PROYEK 2}\\[1.2cm]
+
+\textbf{\Large \MakeUppercase{\JudulLaporan}}\\[1.5cm]
+
+% Jika sudah menambahkan logo ULBI di images/logo-ulbi.png, hapus tanda % di bawah:
+% \includegraphics[width=4.2cm]{images/logo-ulbi.png}\\[1.5cm]
+
+Disusun untuk Memenuhi Tugas Mata Kuliah Proyek 2\\
+Program Studi \NamaProdi\\[1.5cm]
+
+\textbf{Disusun Oleh:}\\[0.4cm]
+\begin{tabular}{ll}
+\NamaPenulisSatu & (\NimPenulisSatu) \\
+\NamaPenulisDua & (\NimPenulisDua) \\
+\end{tabular}\\[1.8cm]
+
+\textbf{Dosen Pembimbing:}\\
+\NamaDosenPembimbing\\
+NIDN/NIK: \NidnDosenPembimbing\\[2cm]
+
+\vfill
+\textbf{\MakeUppercase{Program Studi \NamaProdi}}\\
+\textbf{\MakeUppercase{\NamaFakultas}}\\
+\textbf{\MakeUppercase{\NamaUniversitas}}\\
+\textbf{\MakeUppercase{\KotaKampus}}\\
+\textbf{\TahunLaporan}
+\end{center}
+\end{titlepage}
+
+% ---------- ABSTRAK (INDONESIA) ----------
+\chapter*{ABSTRAK}
+\addcontentsline{toc}{chapter}{ABSTRAK}
+
+Jaringan WiFi kampus umumnya menggunakan mekanisme \textit{captive portal} berbasis web yang mengharuskan pengguna memasukkan kredensial secara berulang setiap kali sesi terputus atau perangkat berpindah titik akses. Proyek 2 ini mengembangkan, melengkapi, dan memverifikasi ekosistem aplikasi \textbf{Coneckin} yang terdiri atas aplikasi Android native berbasis Kotlin dan Jetpack Compose, layanan API REST berbasis Node.js (Express 5) dan MongoDB (\texttt{coneckin\_db}), serta halaman panduan dan unduhan berbasis konvensi modular Croot.js pada GitHub Pages (\texttt{coneckin.github.io}).
+
+Penyempurnaan utama mencakup pemenuhan arsitektur \textit{Hybrid CRUD} secara utuh melalui penambahan fitur \textit{Ubah Akun} pada sisi penyimpanan lokal terenkripsi AES-256 GCM (\texttt{AndroidKeyStore}) serta implementasi operasi \textit{Create}, \textit{Read}, \textit{Update}, dan \textit{Delete} pada endpoint server (\texttt{/portals}, \texttt{/config}, \texttt{/reports}) yang dilindungi autentikasi token admin berbasis perbandingan aman waktu-konstan (SHA-256 \texttt{timingSafeEqual}) dan middleware CORS untuk endpoint baca publik. Dari sisi penjaminan mutu, diterapkan pengujian otomatis berlapis dengan hasil 78 \textit{unit test} JVM Android dengan \textit{line coverage} 95,80\%, 11 \textit{instrumented test} perangkat Android untuk validasi \texttt{AndroidKeyStore}, serta 39 tes otomatis pada server Express dengan \textit{line coverage} 96,53\%. Seluruh pengujian terintegrasi dalam alur CI/CD GitHub Actions yang mensyaratkan ambang \textit{coverage} minimal 80\% sebelum merilis APK dan AAB, serta telah tervalidasi berjalan sinkron di lingkungan produksi Alwaysdata dan GitHub Pages.
+
+\vspace{0.5cm}
+\noindent\textbf{Kata Kunci:} Captive Portal, Hybrid CRUD, Android Kotlin, AES-256 GCM, Code Coverage, Croot.js.
+
+\clearpage
+
+% ---------- ABSTRACT (ENGLISH) ----------
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{ABSTRACT}
+
+Campus WiFi networks commonly rely on web-based captive portals that require users to repeatedly enter their credentials whenever sessions expire or devices roam across access points. This Project 2 develops, completes, and verifies the \textbf{Coneckin} ecosystem, consisting of a native Android application built with Kotlin and Jetpack Compose, a Node.js (Express 5) and MongoDB (\texttt{coneckin\_db}) REST API service, and a Croot.js-based landing page hosted on GitHub Pages (\texttt{coneckin.github.io}).
+
+Core enhancements complete the Hybrid CRUD architecture by adding an account editing feature (\textit{Ubah Akun}) backed by local AES-256 GCM encryption (\texttt{AndroidKeyStore}), alongside full administrative CRUD endpoints (\texttt{/portals}, \texttt{/config}, \texttt{/reports}) protected by constant-time SHA-256 token verification (\texttt{timingSafeEqual}) and public read CORS support. Multi-layered automated testing achieves 78 Android JVM unit tests with 95.80\% line coverage, 11 Android instrumented tests validating \texttt{AndroidKeyStore} operations on an emulator, and 39 Express API tests reaching 96.53\% line coverage. All test suites are enforced inside GitHub Actions CI/CD pipelines requiring at least 80\% line coverage prior to automated APK/AAB releases, and have been verified end-to-end across Alwaysdata production hosting and GitHub Pages.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} Captive Portal, Hybrid CRUD, Android Kotlin, AES-256 GCM, Code Coverage, Croot.js.
+
+\clearpage
+
+% ---------- KATA PENGANTAR ----------
+\chapter*{KATA PENGANTAR}
+\addcontentsline{toc}{chapter}{KATA PENGANTAR}
+
+Puji syukur penulis panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan karunia-Nya sehingga laporan Proyek 2 dengan judul \textit{\JudulLaporan} dapat diselesaikan tepat waktu. Laporan ini disusun sebagai bagian dari luaran akademik mata kuliah Proyek 2 pada Program Studi \NamaProdi, \NamaUniversitas.
+
+Penulis menyampaikan terima kasih kepada \NamaDosenPembimbing\ selaku dosen pembimbing yang telah memberikan arahan selama proses analisis, implementasi, pengujian, dan penyusunan dokumentasi ekosistem Coneckin. Penulis menyadari bahwa laporan ini masih terbuka terhadap saran dan penyempurnaan. Semoga dokumentasi dan perangkat lunak yang dihasilkan dapat memberikan manfaat nyata bagi sivitas akademika maupun pengembang selanjutnya.
+
+\vspace{1cm}
+\begin{flushright}
+\KotaKampus, November \TahunLaporan\\[1.5cm]
+Penulis
+\end{flushright}
+\clearpage

@@ -1,0 +1,63 @@
+\chapter{Analisis dan Perancangan Sistem}
+
+\section{Arsitektur Sistem Terintegrasi}
+Ekosistem Coneckin menerapkan arsitektur tiga lapis yang saling terhubung melalui protokol HTTPS:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Klien Android (\texttt{coneckin/app}):} Menyimpan kredensial akun terenkripsi lokal (AES-256 GCM), menjalankan deteksi portal dan otomasi login di latar belakang melalui WebView dengan validasi host ketat, menyediakan \textit{Quick Settings Tile} (\texttt{LoginTileService}), kunci perangkat (\texttt{AppLock}), serta menyinkronkan direktori portal dan konfigurasi versi dari server API.
+  \item \textbf{Layanan Server API (\texttt{coneckin/server}):} Berjalan pada Node.js dengan Express 5 di hosting Alwaysdata (\url{https://panlink.alwaysdata.net}) dan basis data MongoDB (\texttt{coneckin\_db}). Lapisan logika murni (\texttt{lib.js}) dan definisi aplikasi (\texttt{app.js}) dipisahkan dari \textit{bootstrap} jaringan (\texttt{server.js}) agar seluruh endpoint dapat diuji secara terisolasi.
+  \item \textbf{Antarmuka Web (\texttt{coneckin.github.io}):} Halaman statis berbasis ES6 Module (konvensi Croot.js) di GitHub Pages yang mengonsumsi endpoint publik \texttt{GET /config}, \texttt{GET /portals}, dan \texttt{GET /health}, sekaligus menautkan tombol unduhan langsung ke aset \texttt{coneckin.apk} pada GitHub Releases terbaru.
+\end{enumerate}
+
+\section{Perancangan Hybrid CRUD}
+\subsection{CRUD Lokal Android}
+Untuk melengkapi siklus CRUD pada penyimpanan akun lokal sekaligus menjaga agar logika bisnis dapat diuji pada JVM, fungsi pengelolaan akun dipecah ke dalam modul \texttt{AccountRepository} dan \texttt{AccountOps} di atas lapisan penyimpanan terenkripsi \texttt{AccountStore} dan \texttt{CryptoManager}:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Create:} Menambahkan akun baru dengan validasi nama, username, password, dan normalisasi daftar alamat host portal.
+  \item \textbf{Read:} Memuat daftar akun tersimpan, menentukan akun aktif terpilih, serta menampilkan daftar portal dari cache lokal atau server.
+  \item \textbf{Update (Fitur Baru Proyek 2):} Memungkinkan pengguna menyunting nama akun, kredensial, dan daftar portal pada akun yang sudah ada melalui dialog \textit{Ubah Akun} tanpa kehilangan status akun aktif.
+  \item \textbf{Delete:} Menghapus akun tertentu beserta penyesuaian otomatis pemilihan akun aktif bila akun yang dihapus sedang aktif.
+\end{itemize}
+
+\subsection{CRUD Server API (\texttt{coneckin\_db})}
+Basis data \texttt{coneckin\_db} terdiri atas tiga koleksi utama: \texttt{portals} (indeks unik pada field \texttt{host}, data awal \texttt{ULBI — ypbpi.hotspot}), \texttt{app\_config} (dokumen tunggal \texttt{\_id: "main"}), dan \texttt{reports} (indeks TTL otomatis 90 hari atau 7.776.000 detik dengan batas maksimum 20.000 dokumen). Daftar lengkap rancangan endpoint disajikan pada Tabel~\ref{tab:endpoints}.
+
+\begin{table}[H]
+\centering
+\caption{Rancangan Endpoint REST API Server Coneckin}
+\label{tab:endpoints}
+\small
+\begin{tabular}{@{}p{1.5cm}p{2.9cm}p{2.2cm}p{6.0cm}@{}}
+\toprule
+\textbf{Metode} & \textbf{Endpoint} & \textbf{Akses} & \textbf{Fungsi Utama} \\
+\midrule
+GET & \texttt{/} & Publik + CORS & Identitas singkat layanan API. \\
+GET & \texttt{/health} & Publik + CORS & Pemeriksaan status server dan koneksi MongoDB (\texttt{ok}, \texttt{db}). \\
+GET & \texttt{/portals} & Publik + CORS & Mengambil daftar portal terverifikasi (\texttt{verified: true}); opsi \texttt{?all=true} memerlukan token admin. \\
+POST & \texttt{/portals} & Admin (Bearer) & Menambahkan entri portal kampus baru (menolak duplikat \texttt{409}). \\
+PUT & \texttt{/portals/:host} & Admin (Bearer) & Memperbarui nama kampus dan/atau status \texttt{verified}. \\
+DELETE & \texttt{/portals/:host} & Admin (Bearer) & Menghapus portal kampus berdasarkan \texttt{host}. \\
+GET & \texttt{/config} & Publik + CORS & Versi rilis terbaru GitHub (cache 10 menit), URL APK, \texttt{minSupportedCode}, dan pengumuman. \\
+PUT & \texttt{/config} & Admin (Bearer) & Memperbarui pesan pengumuman dan versi minimum (\textit{upsert}). \\
+POST & \texttt{/reports} & Publik (ketat) & Mengirim laporan gangguan anonim tervalidasi (\textit{opt-in}). \\
+GET & \texttt{/reports} & Admin (Bearer) & Membaca daftar laporan beserta ringkasan per kode dan host dengan filter \texttt{host}, \texttt{code}, \texttt{limit}. \\
+DELETE & \texttt{/reports/:id} & Admin (Bearer) & Menghapus laporan spesifik berdasarkan \texttt{ObjectId} untuk moderasi. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Perancangan Keamanan dan Privasi}
+Desain keamanan diterapkan secara berlapis di seluruh komponen:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Enkripsi Kredensial Lokal:} Setiap operasi simpan pada \texttt{CryptoManager} menghasilkan IV acak baru pada mode AES-256 GCM menggunakan kunci \texttt{coneckin\_master\_key} di \texttt{AndroidKeyStore}. Pencadangan cloud (\texttt{allowBackup}) dan akses file lokal WebView dinonaktifkan.
+  \item \textbf{Verifikasi Host Ketat:} Penyuntikan kredensial otomatis hanya diizinkan apabila host halaman login yang dimuat cocok persis dengan host yang telah didaftarkan pengguna (\texttt{PortalSelection} dan \texttt{LoginMapping}).
+  \item \textbf{Otorisasi Admin Aman Waktu-Konstan:} Middleware \texttt{requireAdmin} pada \texttt{server/lib.js} membandingkan token \texttt{Authorization: Bearer} terhadap \texttt{ADMIN\_TOKEN} menggunakan \texttt{crypto.timingSafeEqual} atas digest SHA-256 sehingga panjang token tidak bocor melalui serangan \textit{timing}.
+  \item \textbf{Perlindungan Abuse dan Privasi Log:} Pembatasan laju permintaan (\texttt{rateLimit}) dibedakan untuk baca (120/menit), tulis laporan (10/jam), dan admin (60/menit). Fungsi \texttt{redact()} menyamarkan URI MongoDB dari pesan galat sebelum dicetak ke log server.
+  \item \textbf{Keamanan DOM Landing Page:} Seluruh pembaruan elemen pada \texttt{coneckin.github.io} menggunakan \texttt{textContent} dan \texttt{createElement} (tanpa \texttt{innerHTML}) untuk mencegah serangan XSS, serta memvalidasi agar tautan APK dari API hanya berasal dari prefiks rilis resmi \url{https://github.com/coneckin/coneckin/releases/}.
+\end{enumerate}
+
+\section{Perancangan Pipeline CI/CD}
+Repositori utama dilengkapi dua alur kerja GitHub Actions:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{\texttt{release.yml} (Android):} Menjalankan \texttt{testDebugUnitTest}, membangkitkan laporan cakupan JaCoCo (\texttt{createDebugUnitTestCoverageReport}), memverifikasi ambang minimal 80\% melalui task \texttt{verifyLogicCoverage}, mengunggah artefak laporan cakupan, dan hanya bila seluruh pengujian lulus, membangun serta menerbitkan \texttt{coneckin.apk} dan \texttt{coneckin.aab} ke GitHub Releases.
+  \item \textbf{\texttt{server-test.yml} (Server API):} Memasang dependensi Node.js dan menjalankan \texttt{npm test} dengan bendera \texttt{--experimental-test-coverage --test-coverage-lines=80} pada setiap \textit{push} dan \textit{pull request} yang menyentuh direktori \texttt{server/}.
+\end{itemize}

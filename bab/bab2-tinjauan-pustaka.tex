@@ -1,0 +1,20 @@
+\chapter{Tinjauan Pustaka}
+
+\section{Arsitektur Captive Portal WiFi}
+\textit{Captive portal} merupakan mekanisme pengalihan lalu lintas jaringan yang menahan akses internet klien baru hingga proses autentikasi atau persetujuan kebijakan selesai dilakukan melalui halaman web portal \cite{rfc8952}. Pada Android 10 (API 29) ke atas, sistem operasi mendeteksi kondisi portal secara otomatis dan menandai jaringan WiFi tanpa akses internet sampai halaman login diselesaikan. Otomasi login pada sisi klien harus memperhatikan pencocokan nama host secara ketat agar kredensial tidak pernah disuntikkan ke halaman pihak ketiga yang tidak sah.
+
+\section{Arsitektur Hybrid CRUD}
+Dalam aplikasi seluler berorientasi privasi, pemisahan lokasi penyimpanan data sangat krusial. Pendekatan \textit{Hybrid CRUD} membagi siklus hidup data ke dua lapisan terpisah:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{CRUD Lokal Terenkripsi (Sisi Perangkat):} Data sensitif milik pengguna (daftar akun portal, username, password, dan daftar host) dikelola penuh di perangkat melalui operasi \textit{Create}, \textit{Read}, \textit{Update}, dan \textit{Delete} tanpa sinkronisasi ke cloud.
+  \item \textbf{CRUD Terpusat (Sisi Server API):} Data referensi publik dan operasional non-pribadi—yakni direktori portal kampus (\texttt{portals}), konfigurasi versi dan pengumuman (\texttt{app\_config}), serta laporan gangguan anonim (\texttt{reports})—dikelola di server basis data MongoDB \cite{mongodb_node} melalui REST API Express 5 \cite{express_docs}.
+\end{itemize}
+
+\section{Enkripsi AES-256 GCM dan Android Keystore}
+\textit{Advanced Encryption Standard} dengan mode \textit{Galois/Counter Mode} (AES-256 GCM) menyediakan enkripsi terautentikasi (\textit{authenticated encryption}) yang menjamin kerahasiaan sekaligus integritas \textit{ciphertext} menggunakan \textit{Initialization Vector} (IV) unik dan tag autentikasi \cite{nist_gcm}. Pada platform Android, penyimpanan kunci kriptografi di \texttt{AndroidKeyStore} melindungi materi kunci agar tidak mudah diekstraksi dari ruang proses aplikasi maupun ikut tersalin saat pencadangan sistem \cite{android_keystore}.
+
+\section{Konvensi Modular Croot.js}
+Croot.js memperkenalkan pendekatan pengembangan antarmuka web statis berbasis modul ECMAScript (ES6 Modules) tanpa ketergantungan \textit{bundler} berat \cite{crootjs_repo}. Struktur kode dipisahkan secara bersih ke dalam direktori konfigurasi (\texttt{js/config/}), pustaka utilitas (\texttt{js/lib/}), pengontrol logika halaman (\texttt{js/controller/}), dan satu titik masuk utama (\texttt{js/croot.js}), sehingga sangat cocok diterapkan pada layanan hosting statis seperti GitHub Pages.
+
+\section{Pengujian Otomatis, Code Coverage, dan CI/CD}
+Penjaminan mutu perangkat lunak modern memadukan pengujian unit cepat pada JVM/Node.js, pengujian instrumentasi pada lingkungan perangkat nyata atau emulator, serta pengukuran \textit{code coverage} untuk mengidentifikasi cabang logika yang belum teruji. Pada ekosistem Android/JVM, \textbf{JaCoCo} mengukur cakupan baris dan cabang secara deterministik \cite{jacoco_docs}, sedangkan pada Node.js versi 20 ke atas tersedia \textit{built-in test runner} beserta bendera \texttt{--experimental-test-coverage} yang memungkinkan penegakan ambang \textit{coverage} langsung tanpa pustaka tambahan \cite{nodejs_test_runner}. Integrasi pada GitHub Actions memastikan setiap perubahan yang masuk ke cabang utama (\texttt{main}) telah lulus seluruh rangkaian tes sebelum paket rilis diterbitkan.

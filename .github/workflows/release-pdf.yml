@@ -1,0 +1,67 @@
+name: Build and Release PDF (Laporan Proyek 2)
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositori
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Kompilasi LaTeX ke PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          latexmk_use_lualatex: false
+          args: -pdf -interaction=nonstopmode -halt-on-error -file-line-error
+
+      - name: Salin PDF hasil kompilasi
+        run: |
+          cp main.pdf "laporan-coneckin.pdf"
+          ls -lh "laporan-coneckin.pdf"
+
+      - name: Unggah artefak PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: laporan-coneckin
+          path: "laporan-coneckin.pdf"
+
+      - name: Tentukan tag versi berikutnya
+        id: next_tag
+        run: |
+          git fetch --tags --force
+          LAST_TAG=$(git tag --list 'v1.0.*' --sort=-v:refname | head -n 1)
+          if [ -z "$LAST_TAG" ]; then
+            NEXT_TAG="v1.0.1"
+          else
+            PATCH=${LAST_TAG##*.}
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_TAG="v1.0.${NEXT_PATCH}"
+          fi
+          echo "tag=$NEXT_TAG" >> "$GITHUB_OUTPUT"
+          echo "Next release tag: $NEXT_TAG"
+
+      - name: Buat GitHub Release dan lampirkan PDF
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.next_tag.outputs.tag }}
+          name: "Laporan Proyek 2 Coneckin ${{ steps.next_tag.outputs.tag }}"
+          body: |
+            Rilis otomatis PDF **Laporan Proyek 2 Proyek 2 Coneckin** dari commit `${{ github.sha }}`.
+            - Berkas utama: `laporan-coneckin.pdf`
+            - Tautan unduh langsung terbaru: `releases/latest/download/laporan-coneckin.pdf`
+          files: |
+            laporan-coneckin.pdf
+          generate_release_notes: true

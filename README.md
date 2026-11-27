@@ -1,35 +1,30 @@
-# Laporan Proyek 2 - Coneckin
+# laporan — Laporan Proyek 2 Coneckin (LaTeX)
 
-Laporan Proyek 2 Program Studi Sarjana Terapan Teknik Informatika, Universitas Logistik dan Bisnis Internasional (ULBI) menggunakan LaTeX.
+Repositori sumber LaTeX untuk **Laporan Akhir Proyek 2 Coneckin** dengan kompilasi dan rilis PDF otomatis melalui GitHub Actions.
 
-Disusun sesuai dengan kriteria panduan **Software Engineer** pada [Project Instruction](https://ll.my.id/instruction/).
+- **Unduh PDF Terbaru:** https://github.com/coneckin/laporan/releases/latest/download/laporan-coneckin.pdf
+- **Semua Rilis:** https://github.com/coneckin/laporan/releases
 
-## Struktur Berkas
+## Struktur Repositori
 
-```
+```text
 laporan/
-├── .github/
-│   └── workflows/
-│       └── release.yml        # CI/CD otomatis: compile LaTeX & auto release PDF
-├── chapters/
-│   ├── ringkasan.tex          # Ringkasan eksekutif
-│   ├── bab1.tex               # Pendahuluan & profil Software Engineer
-│   ├── bab2.tex               # Tinjauan pustaka & landasan teori
-│   ├── bab3.tex               # Analisis & perancangan arsitektur
-│   ├── bab4.tex               # Implementasi & pengujian (acceptance test)
-│   ├── bab5.tex               # Kesimpulan & saran
-│   └── lampiran.tex           # Lampiran bukti repositori & CI/CD
-├── figures/                   # Diagram arsitektur & tangkapan layar
-├── references.bib             # Daftar pustaka (BibTeX IEEE format)
-├── main.tex                   # Dokumen induk LaTeX
-├── compile-latex.ps1          # Script kompilasi lokal Windows PowerShell
-└── README.md
+├── .github/workflows/release-pdf.yml   # Auto-compile LaTeX & auto-release PDF (v1.0.x)
+├── config/metadata.tex                 # Judul, identitas penulis, NIM, & dosen pembimbing
+├── bab/
+│   ├── halaman-depan.tex               # Cover, Abstrak ID/EN, Kata Pengantar
+│   ├── bab1-pendahuluan.tex            # Latar belakang, rumusan masalah, tujuan, ruang lingkup
+│   ├── bab2-tinjauan-pustaka.tex       # Captive portal, Hybrid CRUD, AES-GCM, Croot.js, CI/CD
+│   ├── bab3-analisis-perancangan.tex   # Arsitektur, rancangan CRUD, keamanan, & CI/CD
+│   ├── bab4-implementasi-pengujian.tex # Hasil implementasi, 128 tes (>95% coverage), & verifikasi live
+│   └── bab5-penutup.tex                # Kesimpulan & saran
+├── images/                             # Folder gambar bukti & logo
+├── main.tex                            # Dokumen utama LaTeX
+└── referensi.bib                       # Daftar pustaka BibTeX
 ```
 
-## Alur Kerja Otomatisasi (CI/CD)
+## Cara Penggunaan
 
-Setiap perubahan yang di-*push* ke cabang `main` akan:
-1. Menjalankan GitHub Actions workflow `release.yml`.
-2. Mengompilasi `main.tex` menggunakan TeXLive / `xu-cheng/latex-action`.
-3. Menghasilkan tag rilis otomatis `v1.0.<nomor_build>`.
-4. Menerbitkan rilis baru di GitHub Releases dengan menyertakan `Laporan-Proyek2-Coneckin.pdf`.
+1. Lengkapi data kelompok dan dosen pembimbing pada `config/metadata.tex`.
+2. Tambahkan tangkapan layar bukti ke folder `images/` dan aktifkan blok gambar pada `bab/bab4-implementasi-pengujian.tex`.
+3. `git commit` dan `git push origin main` — GitHub Actions akan otomatis mengompilasi `main.tex` menjadi `laporan-coneckin.pdf` dan menerbitkannya ke GitHub Releases dengan tag berurutan (`v1.0.x`).

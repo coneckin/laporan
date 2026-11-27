@@ -1,0 +1,17 @@
+\chapter{Penutup}
+
+\section{Kesimpulan}
+Berdasarkan hasil pengembangan, pengujian, dan verifikasi produksi ekosistem Coneckin pada Proyek 2 ini, dapat disimpulkan beberapa hal utama:
+\begin{enumerate}[leftmargin=*]
+  \item Arsitektur \textit{Hybrid CRUD} telah berhasil dilengkapi secara menyeluruh. Di sisi perangkat Android, fitur \textit{Ubah Akun} melengkapi operasi CRUD lokal di atas enkripsi AES-256 GCM (\texttt{AndroidKeyStore}). Di sisi server, endpoint CRUD penuh untuk koleksi \texttt{portals}, \texttt{app\_config}, dan \texttt{reports} pada basis data \texttt{coneckin\_db} telah beroperasi di Alwaysdata dengan perlindungan autentikasi token admin berbasis SHA-256 \texttt{timingSafeEqual}.
+  \item Penjaminan mutu berbasis pengujian otomatis mencapai 128 skenario lulus, terdiri atas 78 \textit{unit test} JVM Android dengan \textit{line coverage} 95,80\%, 11 \textit{instrumented test} perangkat Android untuk \texttt{CryptoManager} dan \texttt{AccountStore}, serta 39 pengujian server Express dengan \textit{line coverage} 96,53\%. Ambang \textit{coverage} minimal 80\% telah ditegakkan otomatis pada pipeline CI/CD GitHub Actions sebelum rilis APK/AAB diterbitkan.
+  \item \textit{Landing page} berbasis konvensi modular Croot.js pada \url{https://coneckin.github.io/} telah aktif di GitHub Pages dan terintegrasi langsung dengan API produksi \url{https://panlink.alwaysdata.net} (status \texttt{ok: true, db: true}) serta rilis APK terbaru.
+\end{enumerate}
+
+\section{Saran}
+Untuk pengembangan ekosistem Coneckin selanjutnya, beberapa hal yang disarankan antara lain:
+\begin{enumerate}[leftmargin=*]
+  \item Menambahkan antarmuka web panel admin sederhana yang memanfaatkan endpoint CRUD berotorisasi \texttt{ADMIN\_TOKEN} untuk memverifikasi usulan portal kampus baru dan memantau ringkasan laporan gangguan.
+  \item Mengintegrasikan pengujian UI Jetpack Compose tambahan pada \textit{instrumented test} guna memverifikasi interaksi dialog tambah dan ubah akun secara otomatis pada berbagai ukuran layar.
+  \item Memperluas dukungan profil portal kampus lain melalui kontribusi direktori terbuka pada repositori Coneckin.
+\end{enumerate}
