@@ -59,7 +59,7 @@ jobs:
           tag_name: ${{ steps.next_tag.outputs.tag }}
           name: "Laporan Proyek 2 Coneckin ${{ steps.next_tag.outputs.tag }}"
           body: |
-            Rilis otomatis PDF **Laporan Proyek 2 Proyek 2 Coneckin** dari commit `${{ github.sha }}`.
+            Rilis otomatis PDF **Laporan Proyek 2 Coneckin** dari commit `${{ github.sha }}`.
             - Berkas utama: `laporan-coneckin.pdf`
             - Tautan unduh langsung terbaru: `releases/latest/download/laporan-coneckin.pdf`
           files: |

@@ -1,0 +1,46 @@
+\chapter*{LAMPIRAN}
+\addcontentsline{toc}{chapter}{LAMPIRAN}
+
+\section*{Lampiran A: Tautan Repositori dan Layanan Produksi}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Repositori Utama (Android \& Server API):} \url{https://github.com/coneckin/coneckin}
+  \item \textbf{Landing Page Panduan (Croot.js):} \url{https://coneckin.github.io/}
+  \item \textbf{Endpoint Kesehatan API Produksi:} \url{https://panlink.alwaysdata.net/health}
+  \item \textbf{Paket Rilis APK Terbaru:} \url{https://github.com/coneckin/coneckin/releases/latest/download/coneckin.apk}
+\end{itemize}
+
+\section*{Lampiran B: Rincian Code Coverage Logika Non-UI Android (JaCoCo)}
+Berikut adalah rincian cakupan baris dari eksekusi task \texttt{verifyLogicCoverage} pada seluruh 37 kelas logika inti Android (total 358/369 baris atau 97,02\%):
+
+\begin{table}[H]
+\centering
+\caption{Rincian Line Coverage Modul Logika Non-UI Coneckin (JaCoCo)}
+\label{tab:jacoco-detail-lampiran}
+\small
+\begin{tabular}{@{}p{5.8cm}ccc@{}}
+\toprule
+\textbf{Kelompok / Kelas Logika} & \textbf{Baris Tercakup} & \textbf{Total Baris} & \textbf{Cakupan} \\
+\midrule
+\texttt{PinManager} \& \texttt{PinCheck.*} (Keamanan PIN) & 68 & 68 & 100,0\% \\
+\texttt{ModelsKt}, \texttt{Account}, \texttt{Portal}, \texttt{AppData}, \texttt{InputCheck.*}, \texttt{EditInputCheck.*} & 103 & 103 & 100,0\% \\
+\texttt{AccountRepository} \& \texttt{AppDataJson} & 50 & 50 & 100,0\% \\
+\texttt{LoginMappingKt} \& \texttt{LoginResult.*} & 28 & 28 & 100,0\% \\
+\texttt{PortalSelectionKt} \& \texttt{PortalPick.*} & 14 & 14 & 100,0\% \\
+\texttt{RemoteCacheStore} \& \texttt{DirectoryPortal}, \texttt{RemoteConfig} & 28 & 28 & 100,0\% \\
+\texttt{ReporterKt} & 11 & 11 & 100,0\% \\
+\texttt{ReportQueue} & 39 & 40 & 97,5\% \\
+\texttt{RemoteKt} (termasuk pembungkus HTTP \texttt{Api}) & 17 & 27 & 63,0\% \\
+\midrule
+\textbf{Total (37 Kelas Logika Non-UI)} & \textbf{358} & \textbf{369} & \textbf{97,02\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Lampiran C: Ringkasan Konfigurasi CI/CD (\texttt{release.yml})}
+Alur kerja \texttt{.github/workflows/release.yml} pada repositori \texttt{coneckin} memastikan pengujian dan verifikasi ambang \textit{coverage} minimal 80\% dijalankan sebelum membangun biner rilis:
+\begin{lstlisting}
+- name: Unit test dan coverage
+  run: ./gradlew testDebugUnitTest createDebugUnitTestCoverageReport verifyLogicCoverage
+- name: Build APK dan AAB
+  run: ./gradlew assembleRelease bundleRelease
+\end{lstlisting}

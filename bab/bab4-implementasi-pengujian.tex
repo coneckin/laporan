@@ -1,12 +1,20 @@
 \chapter{Implementasi dan Pengujian}
 
 \section{Implementasi Modul Aplikasi Android (Paket A)}
-Pada sisi aplikasi Android (\texttt{app/src/main/java/coneckin/id/biz/id/}), implementasi difokuskan pada pemenuhan operasi CRUD penuh dan peningkatan keterujian kode (\textit{testability}):
+Pada sisi aplikasi Android (\texttt{app/src/main/java/coneckin/id/biz/id/}), implementasi difokuskan pada pemenuhan operasi CRUD penuh, penguatan keamanan lokal, dan peningkatan keterujian kode (\textit{testability}):
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Pemisahan Logika Murni:} Logika pengelolaan akun, pemetaan galat login, pemilihan portal, cache konfigurasi, dan antrean laporan dipisahkan ke dalam \texttt{AccountRepository.kt}, \texttt{LoginMapping.kt}, \texttt{PortalSelection.kt}, \texttt{Models.kt}, \texttt{Remote.kt}, dan \texttt{Reporter.kt} sehingga dapat diuji cepat di JVM.
-  \item \textbf{Fitur Ubah Akun:} Layar utama pada \texttt{MainActivity.kt} dilengkapi ikon sunting pada setiap kartu akun yang membuka dialog \textit{Ubah Akun} terisi data lama untuk memperbarui nama akun, kredensial, dan daftar portal secara aman melalui \texttt{AccountStore}.
-  \item \textbf{Konfigurasi JaCoCo:} Berkas \texttt{app/build.gradle.kts} menambahkan task \texttt{createDebugUnitTestCoverageReport} dan \texttt{verifyLogicCoverage} dengan batas minimal \textit{line coverage} sebesar 80\% pada modul logika inti.
+  \item \textbf{Pemisahan Logika Murni:} Logika pengelolaan akun, pemetaan galat login, pemilihan portal, cache konfigurasi, antrean laporan, dan pengelola PIN dipisahkan ke dalam \texttt{AccountRepository.kt}, \texttt{LoginMapping.kt}, \texttt{PortalSelection.kt}, \texttt{Models.kt}, \texttt{Remote.kt}, \texttt{Reporter.kt}, serta \texttt{AppPin.kt} sehingga dapat diuji cepat di JVM.
+  \item \textbf{Fitur Ubah Akun, Validasi Duplikat, dan Ekspor/Impor:} Layar utama pada \texttt{MainActivity.kt} dilengkapi ikon sunting pada setiap kartu akun yang membuka layar \textit{Ubah Akun} terisi data lama melalui \texttt{AccountStore}. Fungsi \texttt{findAccountConflict()} dan \texttt{mergeImported()} pada \texttt{Models.kt} mencegah duplikasi nama akun maupun isi kredensial pada penambahan, penyuntingan, serta impor cadangan JSON.
+  \item \textbf{Penguatan Keamanan Akses Lokal dan R8:} \texttt{PinManager} pada \texttt{AppPin.kt} mengamankan PIN menggunakan \texttt{PBKDF2WithHmacSHA256} (100.000 iterasi, salt acak 16-byte per perangkat, migrasi otomatis dari hash SHA-256 lama) disertai pembatasan 5 kali salah percobaan dengan jeda kunci 30 detik. Verifikasi PIN/biometrik diterapkan per sesi aplikasi (\texttt{sessionVerified}), autentikasi biometrik ditingkatkan ke \texttt{BIOMETRIC\_STRONG} pada \texttt{AppLock.kt}, serta tersedia pemulihan \textit{Lupa PIN} (verifikasi kunci layar perangkat atau reset akun bila perangkat tidak memiliki kunci layar). Pada build rilis, minifikasi R8 (\texttt{isMinifyEnabled = true} dan \texttt{isShrinkResources = true}) menghasilkan berkas APK sebesar 2,25~MB (2.357.843 byte).
+  \item \textbf{Konfigurasi JaCoCo:} Berkas \texttt{app/build.gradle.kts} menambahkan task \texttt{createDebugUnitTestCoverageReport} dan \texttt{verifyLogicCoverage} dengan batas minimal \textit{line coverage} sebesar 80\% pada 37 kelas logika inti.
 \end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{images/app-ubah-akun.png}
+  \caption{Antarmuka fitur Ubah Akun pada aplikasi Android Coneckin.}
+  \label{fig:app-ubah-akun}
+\end{figure}
 
 \section{Implementasi Layanan API Server (Paket B)}
 Pada direktori \texttt{server/}, kode monolitik dipecah menjadi tiga modul terstruktur:
@@ -32,38 +40,91 @@ Pengujian dilakukan pada tiga lapisan berbeda: pengujian unit JVM Android, pengu
 \centering
 \caption{Rekapitulasi Hasil Pengujian Otomatis dan Code Coverage Ekosistem Coneckin}
 \label{tab:hasil-uji}
-\begin{tabular}{@{}p{4.4cm}ccc@{}}
+\begin{tabular}{@{}p{4.6cm}ccc@{}}
 \toprule
 \textbf{Lapisan Pengujian} & \textbf{Jumlah Skenario} & \textbf{Line Coverage} & \textbf{Status} \\
 \midrule
-Android JVM Unit Test (JaCoCo) & 78 tes & 95,80\% (251/262 baris) & LULUS \\
+Android JVM Unit Test (JaCoCo) & 90 tes & 97,02\% (358/369 baris) & LULUS \\
 Android Instrumented Test (\texttt{AndroidKeyStore}) & 11 tes & Terverifikasi AVD & LULUS \\
 Server API Express (\texttt{app.js} + \texttt{lib.js}) & 39 tes & 96,53\% & LULUS \\
 \midrule
-\textbf{Total Pengujian Otomatis} & \textbf{128 tes} & \textbf{$>$ 95\%} & \textbf{LULUS} \\
+\textbf{Total Pengujian Otomatis} & \textbf{140 tes} & \textbf{$>$ 96\%} & \textbf{LULUS} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Rincian cakupan pengujian pada tiap lapisan meliputi:
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Android JVM Unit Test (78 tes):} Meliputi \texttt{AccountOpsTest}, \texttt{AccountRepositoryTest}, \texttt{LoginMappingTest}, \texttt{PortalSelectionTest}, \texttt{RemoteCacheStoreTest}, \texttt{ReportQueueTest}, serta rangkaian tes bawaan (\texttt{ModelsTest}, \texttt{RemoteTest}, \texttt{ReporterTest}). Seluruhnya lulus dengan cakupan 95,80\% sehingga jauh melampaui syarat minimal 80\%.
+  \item \textbf{Android JVM Unit Test (90 tes):} Meliputi \texttt{AccountOpsTest} (26), \texttt{AccountRepositoryTest} (12), \texttt{PortalSelectionTest} (9), \texttt{ReportQueueTest} (9), \texttt{AppPinTest} (6), \texttt{LoginMappingTest} (6), \texttt{RemoteCacheStoreTest} (6), \texttt{RemoteTest} (6), \texttt{ModelsTest} (5), dan \texttt{ReporterTest} (5). Seluruhnya lulus dengan cakupan 97,02\% (358/369 baris pada 37 kelas logika) sehingga jauh melampaui syarat minimal 80\%.
   \item \textbf{Android Instrumented Test (11 tes):} Dijalankan melalui \texttt{./gradlew connectedDebugAndroidTest} pada emulator Android (selesai dalam 19 detik, \texttt{BUILD SUCCESSFUL}). Pengujian mencakup 8 skenario pada \texttt{CryptoManagerInstrumentedTest} (enkripsi-dekripsi AES-256 GCM, keunikan IV acak, deteksi modifikasi \textit{ciphertext}, dan penanganan input tidak valid), 2 skenario pada \texttt{AccountStoreInstrumentedTest} (siklus simpan, baca, ubah, dan hapus akun terenkripsi), serta 1 skenario \texttt{ExampleInstrumentedTest}.
-  \item \textbf{Server API Node.js (39 tes):} Meliputi \texttt{server/test/lib.test.js} dan \texttt{server/test/app.test.js} menggunakan injeksi basis data tiruan dalam memori. Seluruh jalur publik, validasi galat (\texttt{400}, \texttt{401}, \texttt{404}, \texttt{409}, \texttt{413}, \texttt{429}, \texttt{500}, \texttt{503}), otorisasi token admin, CRUD penuh (\texttt{portals}, \texttt{config}, \texttt{reports}), serta header CORS teruji dengan cakupan baris 96,53\%.
+  \item \textbf{Server API Node.js (39 tes):} Meliputi \texttt{server/test/lib.test.js} dan \texttt{server/test/app.test.js} menggunakan injeksi basis data tiruan dalam memori. Seluruh jalur publik, validasi galat (\texttt{400}, \texttt{401}, \texttt{404}, \texttt{409}, \texttt{413}, \texttt{429}, \texttt{500}, \texttt{503}), otorisasi token admin, CRUD penuh (\texttt{portals}, \texttt{config}, \texttt{reports}), serta header CORS teruji dengan cakupan baris 96,53\% (\texttt{lib.js} 100,00\%, \texttt{app.js} 93,98\%).
 \end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{images/jacoco-coverage.png}
+  \caption{Ringkasan laporan JaCoCo Android pada task \texttt{createDebugUnitTestCoverageReport} (95,80\% saat tangkapan layar awal diambil; meningkat menjadi 97,02\% setelah penambahan \texttt{PinManager}).}
+  \label{fig:jacoco-coverage}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{images/jacoco-detail.png}
+  \caption{Rincian cakupan per kelas logika inti Coneckin pada laporan HTML JaCoCo.}
+  \label{fig:jacoco-detail}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{images/android-instrumented-test.png}
+  \caption{Hasil eksekusi 11 Android Instrumented Test pada emulator AVD (100\% LULUS).}
+  \label{fig:instrumented-test}
+\end{figure}
+
+\section{Pengujian Skenario Fungsional dan Keamanan}
+Selain pengujian unit dan instrumentasi, dilakukan pengujian skenario end-to-end mencakup alur otomasi login, validasi akun, keamanan PIN, dan rilis biner sebagaimana dirangkum pada Tabel~\ref{tab:uji-skenario}.
+
+\begin{table}[H]
+\centering
+\caption{Matriks Pengujian Skenario Fungsional dan Keamanan Coneckin}
+\label{tab:uji-skenario}
+\small
+\begin{tabular}{@{}p{1.4cm}p{4.3cm}p{4.5cm}p{2.3cm}@{}}
+\toprule
+\textbf{ID Uji} & \textbf{Skenario Pengujian} & \textbf{Hasil yang Diharapkan} & \textbf{Status} \\
+\midrule
+UT-01 & Tambah akun baru dan validasi duplikat & Akun terenkripsi tersimpan; nama/isi duplikat ditolak & Lulus \\
+UT-02 & Otomasi login pada portal \texttt{ypbpi.hotspot} & Berhasil masuk portal otomatis tanpa ketik manual & Lulus \\
+UT-03 & Login satu ketukan lewat Quick Settings Tile & Memicu alur login langsung dari panel notifikasi & Lulus \\
+UT-04 & Penanganan saat WiFi tidak aktif & Menampilkan pesan \texttt{NO\_WIFI} dan tombol ke pengaturan & Lulus \\
+UT-05 & Verifikasi \texttt{BIOMETRIC\_STRONG} saat login & Dialog kunci perangkat/biometrik muncul sebelum login & Lulus \\
+UT-06 & Fallback login manual via WebView & Membuka halaman portal saat form tidak standar & Lulus \\
+UT-07 & Ubah akun dan penghapusan akun aktif & Data terbarui; akun aktif dialihkan otomatis bila terhapus & Lulus \\
+UT-08 & Keamanan PIN PBKDF2, \textit{lockout}, \& Lupa PIN & Terkunci 30 detik setelah 5 kali salah; reset aman bekerja & Lulus \\
+UT-09 & Ekspor dan impor cadangan akun JSON & Akun terimpor tanpa duplikasi dengan ID baru yang aman & Lulus \\
+UT-10 & Pipeline CI/CD dan ukuran APK R8 & Tes \& coverage $>80\%$ hijau; APK rilis ringkas 2,25~MB & Lulus \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Verifikasi CI/CD dan Produksi End-to-End}
 Setelah seluruh perubahan digabungkan ke cabang \texttt{main} pada repositori \texttt{coneckin} dan berkas server terbaru diunggah ke direktori kerja Alwaysdata (\texttt{/home/panlink/www/panlink-api}) dengan variabel lingkungan \texttt{MONGODB\_URI}, \texttt{DB\_NAME=coneckin\_db}, dan \texttt{ADMIN\_TOKEN}, dilakukan verifikasi langsung di lingkungan produksi:
 \begin{itemize}[leftmargin=*]
-  \item \textbf{GitHub Actions:} Alur kerja \texttt{Build and Release} dan \texttt{Server test} berstatus hijau serta menerbitkan rilis \texttt{v1.0.16} (\texttt{coneckin.apk} dan \texttt{coneckin.aab}).
+  \item \textbf{GitHub Actions:} Alur kerja \texttt{Build and Release} dan \texttt{Server test} berstatus hijau serta menerbitkan rilis APK (\texttt{coneckin.apk}) dan AAB (\texttt{coneckin.aab}).
   \item \textbf{Endpoint Kesehatan Produksi:} Permintaan \texttt{GET https://panlink.alwaysdata.net/health} mengembalikan status \texttt{HTTP 200 OK}, header \texttt{Access-Control-Allow-Origin: *}, serta muatan JSON \texttt{\{"ok":true,"db":true\}}.
-  \item \textbf{Sinkronisasi Landing Page:} Halaman \url{https://coneckin.github.io/} menampilkan lencana versi terbaru (\texttt{v1.0.16}), lencana status hijau (\texttt{Server API \& Database Aktif}), direktori portal aktif dari server (\texttt{ULBI — ypbpi.hotspot}), dan tautan unduhan langsung APK terbaru.
+  \item \textbf{Sinkronisasi Landing Page:} Halaman \url{https://coneckin.github.io/} menampilkan lencana versi terbaru, lencana status hijau (\texttt{Server API \& Database Aktif}), direktori portal aktif dari server (\texttt{ULBI — ypbpi.hotspot}), dan tautan unduhan langsung APK terbaru.
 \end{itemize}
 
-% Catatan: Tambahkan bukti tangkapan layar ke folder images/ lalu aktifkan blok gambar berikut.
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[width=0.92\textwidth]{images/landing-page-live.png}
-%   \caption{Tampilan Landing Page \texttt{coneckin.github.io} terhubung aktif dengan API Alwaysdata.}
-%   \label{fig:landing-live}
-% \end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{images/github-actions-green.png}
+  \caption{Status hijau pipeline CI/CD GitHub Actions pada repositori \texttt{coneckin}.}
+  \label{fig:gh-actions-green}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{images/landing-page-live.png}
+  \caption{Tampilan Landing Page \texttt{coneckin.github.io} terhubung aktif dengan API Alwaysdata.}
+  \label{fig:landing-live}
+\end{figure}
